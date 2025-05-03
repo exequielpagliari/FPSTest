@@ -30,12 +30,15 @@ public class Weapon : MonoBehaviour
     public ParticleSystem shootParticles;
     public GameObject shootLight;
     public WeaponRecoil weaponRecoil;
+    private AudioSource audioSurce;
+    public AudioClip shootClip;
 
     [Header("Config Raycast")]
     public Camera camGun;
 
     void Start()
     {
+        audioSurce = GetComponent<AudioSource>();
         timeElapsed = Time.time + shootTime;
     }
 
@@ -50,6 +53,12 @@ public class Weapon : MonoBehaviour
 
             if (timeElapsed < Time.time && typeAttack == TypeAttack.Projectil)
             {
+                if (!audioSurce.isPlaying)
+                {
+                    audioSurce.clip = shootClip;
+                    audioSurce.Play();
+                }
+                audioSurce.Play();
                 weaponRecoil.Fire();
                 shootParticles.Play();
                 shootLight.SetActive(true);
@@ -60,6 +69,11 @@ public class Weapon : MonoBehaviour
            
             if (timeElapsed < Time.time && typeAttack == TypeAttack.Ray)
             {
+                if (!audioSurce.isPlaying)
+                {
+                    audioSurce.clip = shootClip;
+                    audioSurce.Play();
+                }
                 weaponRecoil.Fire();
                 shootParticles.Play();
                 shootLight.SetActive(true);

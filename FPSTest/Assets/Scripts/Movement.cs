@@ -17,6 +17,7 @@ public class FirstPersonController : MonoBehaviour
     private CharacterController controller;
     private Vector3 velocity;
     private bool isGrounded;
+    public float velocityMagnitude;
  
 
 
@@ -40,6 +41,8 @@ public class FirstPersonController : MonoBehaviour
     private float dashTimer = 0f;
     private float dashCooldownTimer = 0f;
     private Vector3 dashDirection;
+    public AudioClip dashClip;
+    public AudioSource dashSource;
 
     [Header("Ladder")]
     public float climbSpeed = 3f;
@@ -146,6 +149,11 @@ public class FirstPersonController : MonoBehaviour
 
         if (isDashing)
         {
+            if(!dashSource.isPlaying)
+            {
+                dashSource.clip = dashClip;
+                dashSource.Play();
+            }
             controller.Move(dashDirection * dashSpeed * Time.deltaTime);
 
             dashTimer -= Time.deltaTime;
@@ -191,7 +199,7 @@ public class FirstPersonController : MonoBehaviour
 
         Vector3 move = transform.right * input.x + transform.forward * input.z;
         controller.Move(move * speed * Time.deltaTime);
-
+        velocityMagnitude = move.magnitude;
 
 
         if (isGrounded && velocity.y < 0)
