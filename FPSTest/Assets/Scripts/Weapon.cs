@@ -68,9 +68,7 @@ public class Weapon : MonoBehaviour
                 Vector3 direction = ray.direction;
                 direction = ApplySpread(direction, spreadAngle);
                 if (Physics.Raycast(ray.origin, direction, out RaycastHit hitInfo, 100f,layerMask))
-                {
-                    // Agregamos dispersión
-                    
+                {                    
                     targetPoint = hitInfo.point;
                     if (hitInfo.collider.gameObject.GetComponent<Rigidbody>())
                     {

@@ -8,9 +8,16 @@ public class FirstPersonController : MonoBehaviour
     public float jumpHeight = 2f;
     public float gravity = -9.81f;
 
+    [Header("Swing")]
+    public float swimSpeed = 3f;
+    public float verticalSwimSpeed = 2f;
+    public float waterDrag = 1f;
+    private bool isSwimming;
+
     private CharacterController controller;
     private Vector3 velocity;
     private bool isGrounded;
+ 
 
 
     [Header("Efectos")]
@@ -53,12 +60,26 @@ public class FirstPersonController : MonoBehaviour
         isGrounded = controller.isGrounded;
 
 
+
+
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= Time.deltaTime;
 
         if (currentLadder && Input.GetKey(KeyCode.W))
         {
             isClimbing = true;
+        }
+
+
+        Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+
+        if (isSwimming)
+        {
+            Swim(input);
+        }
+        else
+        {
+            MoveOnGround(input);
         }
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && dashCooldownTimer <= 0f && !isDashing)
@@ -83,7 +104,7 @@ public class FirstPersonController : MonoBehaviour
             if (Input.GetAxis("Vertical") > 0f)
             {
                 Vector3 climbDirection = Vector3.up;
-            controller.Move(climbDirection * climbSpeed * Time.deltaTime);
+                controller.Move(climbDirection * climbSpeed * Time.deltaTime);
 
                 velocity.y = 0f;
             }
@@ -112,7 +133,7 @@ public class FirstPersonController : MonoBehaviour
                 velocity.y = 0f;
             }
 
-            
+
 
 
             if (Input.GetKeyDown(KeyCode.Space))
@@ -120,7 +141,7 @@ public class FirstPersonController : MonoBehaviour
                 isClimbing = false;
             }
 
-            return; 
+            return;
         }
 
         if (isDashing)
@@ -133,13 +154,42 @@ public class FirstPersonController : MonoBehaviour
                 isDashing = false;
             }
 
-            return; 
+            return;
         }
 
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        
 
-        Vector3 move = transform.right * horizontal + transform.forward * vertical;
+       
+
+    }
+
+    void Swim(Vector3 input)
+    {
+        Vector3 move = transform.right * input.x + transform.forward * input.z;
+
+        // Agregar movimiento vertical
+        if (Input.GetKey(KeyCode.Space))
+        {
+            move += Vector3.up * verticalSwimSpeed;
+        }
+        else if (Input.GetKey(KeyCode.LeftAlt))
+        {
+            move += Vector3.down * verticalSwimSpeed;
+        }
+
+        // Aplicamos movimiento
+        controller.Move(move * swimSpeed * Time.deltaTime);
+
+        // Opcional: anular gravedad
+        velocity.y += .1f * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
+    }
+
+    void MoveOnGround(Vector3 input)
+    {
+        
+
+        Vector3 move = transform.right * input.x + transform.forward * input.z;
         controller.Move(move * speed * Time.deltaTime);
 
 
@@ -175,8 +225,6 @@ public class FirstPersonController : MonoBehaviour
             bobTimer = 0f;
             cameraHolder.localPosition = Vector3.Lerp(cameraHolder.localPosition, defaultCamLocalPos, Time.deltaTime * 10f);
         }
-
-        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -184,6 +232,11 @@ public class FirstPersonController : MonoBehaviour
         if (other.CompareTag("Ladder"))
         {
             currentLadder = other;
+        }
+
+        if (other.CompareTag("Water"))
+        {
+            isSwimming = true;
         }
     }
 
@@ -193,6 +246,11 @@ public class FirstPersonController : MonoBehaviour
         {
             isClimbing = false;
             currentLadder = null;
+        }
+
+        if (other.CompareTag("Water"))
+        {
+            isSwimming = false;
         }
     }
 }

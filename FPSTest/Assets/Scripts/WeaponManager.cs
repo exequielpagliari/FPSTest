@@ -10,7 +10,13 @@ public class WeaponManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.Alpha1))
+        if (Input.GetKeyUp(KeyCode.Comma))
+        {
+            ClearWeapon();
+ 
+        }
+
+        if (Input.GetKeyUp(KeyCode.Alpha1))
         {
             ClearWeapon();
             weapons[0].gameObject.SetActive(true);
