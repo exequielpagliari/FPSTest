@@ -38,14 +38,11 @@ public class WeaponRecoil : MonoBehaviour
             gun.transform.localRotation = originalRotation * Quaternion.Euler(-recoil, 0f, 0f); // e.g., cámara sube en Y
         }
 
-        if (Input.GetButton("Fire1"))
-        {
-            Fire();
-        }
+        
 
     }
 
-    void Fire()
+    public void Fire()
     {
         timer = 0f;
         isRecoiling = true;

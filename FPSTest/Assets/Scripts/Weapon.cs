@@ -44,6 +44,7 @@ public class Weapon : MonoBehaviour
 
             if (timeElapsed < Time.time && typeAttack == TypeAttack.Projectil)
             {
+                weaponRecoil.Fire();
                 shootParticles.Play();
                 shootLight.SetActive(true);
                 GameObject.Instantiate(bullet, gunTransform.position, gunTransform.rotation);
@@ -53,11 +54,12 @@ public class Weapon : MonoBehaviour
            
             if (timeElapsed < Time.time && typeAttack == TypeAttack.Ray)
             {
+                weaponRecoil.Fire();
                 shootParticles.Play();
                 shootLight.SetActive(true);
                 Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
                 Ray ray = camGun.ScreenPointToRay(screenCenter);
-                if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f,layerMask))
+                if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity,layerMask))
                 {
 
                     if (hitInfo.collider.gameObject.GetComponent<Rigidbody>())
